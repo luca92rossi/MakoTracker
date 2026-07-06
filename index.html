@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BARCA Tracker">
+<meta name="theme-color" content="#378ADD">
+<title>BARCA Tracker</title>
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bl:#378ADD;--gn:#639922;--rd:#E24B4A;--bg:#f5f5f7;--cd:#fff;--mt:#888}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;background:var(--bg);color:#1a1a1a;max-width:430px;margin:0 auto;display:flex;flex-direction:column;min-height:100vh}
+.top-spacer{height:env(safe-area-inset-top,24px);background:var(--cd)}
+.hdr{padding:12px 20px;background:var(--cd);border-bottom:.5px solid rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center}
+.hdr h1{font-size:22px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:11px;color:var(--mt)}
+.sync{font-size:11px;padding:4px 10px;border-radius:20px;background:#EAF3DE;color:var(--gn);font-weight:500}
+.cnt{flex:1;padding:16px;padding-bottom:80px;overflow-y:auto}
+.tab{display:none}.tab.on{display:block}
+.sh{font-size:14px;font-weight:600;margin:16px 0 10px}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;color:#fff;margin-bottom:8px}.bb{background:var(--bl)}.bg2{background:var(--gn)}.bp{background:#7C3AED}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;font-weight:500;margin-bottom:5px;color:#555}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;border:1px solid #ddd;border-radius:7px;font-size:14px;background:#fafafa;-webkit-appearance:none;font-family:inherit}
+.fg input:disabled{background:#efefef;color:#999;cursor:not-allowed}
+.fg textarea{min-height:60px;resize:vertical}
+.lc{background:#f9f9f9;border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:8px}
+.lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ln{font-size:11px;font-weight:600;color:var(--bl);text-transform:uppercase}
+.lr{display:flex;align-items:center;gap:5px;margin-bottom:6px}.ls{flex:1;padding:7px 9px;border:1px solid #ddd;border-radius:6px;font-size:13px;background:#fff;-webkit-appearance:none}
+.la{font-size:14px;color:var(--mt);flex-shrink:0}
+.ld{display:flex;align-items:center;gap:5px;margin-bottom:6px}.ldi{flex:1;padding:7px 9px;border:1px solid #ddd;background:#efefef;color:#999;cursor:not-allowed;border-radius:6px;font-size:13px}
+.lm{font-size:12px;color:var(--mt)}
+.mr{display:flex;gap:6px;margin-top:6px}.mb{flex:1;padding:7px;border:1px solid #ddd;border-radius:6px;font-size:12px;text-align:center;cursor:pointer;background:#fff;color:var(--mt);font-weight:500}.mb.on{border-color:var(--bl);background:#E6F1FB;color:#0C447C}
+.bal{width:100%;padding:9px;background:#fff;border:1px dashed var(--bl);border-radius:8px;color:var(--bl);font-size:13px;font-weight:500;cursor:pointer;margin-bottom:14px}
+.ts2{background:#E6F1FB;border:1px solid #cce0f5;border-radius:8px;padding:10px;margin-bottom:14px}
+.ts2 .r{font-size:12px;font-weight:600;color:#0C447C;margin-bottom:3px}
+.ts2 .d{font-size:11px;color:var(--bl)}
+.calc{background:#EAF3DE;border:1px solid #b5d88a;border-radius:8px;padding:10px;margin-bottom:14px;font-size:12px;color:#27500A;line-height:1.6}
+.calc b{font-weight:600}
+.del{background:none;border:none;color:var(--rd);cursor:pointer;font-size:13px;padding:2px 4px}
+.dg{background:#E6F1FB;border-radius:8px;padding:10px;margin-bottom:8px}
+.dg-h{font-size:12px;font-weight:600;color:#0C447C;margin-bottom:6px}
+.dg-e{background:#fff;border-radius:6px;padding:8px;margin-bottom:4px;font-size:12px}
+.dg-r{font-weight:500}
+.dg-m{font-size:11px;color:var(--mt);margin-top:2px}
+nav{position:fixed;bottom:0;left:0;right:0;max-width:430px;margin:0 auto;background:var(--cd);border-top:.5px solid rgba(0,0,0,.08);display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:6px 8px;padding-bottom:max(6px,env(safe-area-inset-bottom))}
+nav button{padding:8px 2px;border:none;border-radius:8px;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;background:transparent;color:var(--mt);font-weight:500}
+nav button .io{font-size:18px}
+nav button.on{background:var(--bl);color:#fff}
+</style>
+</head>
+<body>
+<div class="top-spacer"></div>
+<div class="hdr">
+  <div><h1>BARCA Tracker</h1><p>Fuel & oil management</p></div>
+  <span class="sync">☁️ Synced</span>
+</div>
+<div class="cnt">
+  <div id="t-dash" class="tab on"></div>
+  <div id="t-reg" class="tab"></div>
+  <div id="t-fuel" class="tab"></div>
+  <div id="t-hist" class="tab"></div>
+  <div id="t-costs" class="tab"></div>
+  <div id="t-set" class="tab"></div>
+</div>
+<nav>
+  <button class="on" onclick="go('dash',this)"><span class="io">⊡</span>Dash</button>
+  <button onclick="go('reg',this)"><span class="io">✈</span>Trip</button>
+  <button onclick="go('fuel',this)"><span class="io">⛽</span>Fuel</button>
+  <button onclick="go('hist',this)"><span class="io">📋</span>History</button>
+  <button onclick="go('costs',this)"><span class="io">💰</span>Fixed</button>
+  <button onclick="go('set',this)"><span class="io">⚙</span>Settings</button>
+</nav>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,collection,doc,addDoc,deleteDoc,setDoc,getDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyDo8rCwU9JbHX72P7-l_8rj-Ut6o30m8y4",authDomain:"barca-d8ef7.firebaseapp.com",projectId:"barca-d8ef7",storageBucket:"barca-d8ef7.firebasestorage.app",messagingSenderId:"1002749213196",appId:"1:1002749213196:web:f9fffd82bd9c46439acc29"});
+const db=getFirestore(app);
+
+// Distance matrix - 17 locations, 136 pairs
+const DM={"Byron|Eco del mare":4.2,"Byron|Golfo":3.1,"Byron|Mirabello/Spezia":3.9,"Byron|Rosse":1.5,"Byron|Tino":2.1,"Caletta|Byron":4.1,"Caletta|Castello":0.9,"Caletta|Diga":2,"Caletta|Eco del mare":0.7,"Caletta|Golfo":2,"Caletta|Lido":1.2,"Caletta|Mirabello/Spezia":4,"Caletta|Palmaria":3,"Caletta|Pozzale":3.3,"Caletta|Rosse":5.2,"Caletta|Tellaro":1.6,"Caletta|Tino":3.9,"Castello|Byron":3.7,"Castello|Eco del mare":0.9,"Castello|Golfo":2,"Castello|Mirabello/Spezia":3.6,"Castello|Pozzale":3.1,"Castello|Rosse":4.7,"Castello|Tellaro":1.4,"Castello|Tino":3.6,"Diga|Byron":3.5,"Diga|Castello":1.5,"Diga|Eco del mare":2.1,"Diga|Golfo":2.5,"Diga|Mirabello/Spezia":2.2,"Diga|Pozzale":3.4,"Diga|Rosse":4.4,"Diga|Tellaro":2.9,"Diga|Tino":4,"Eco del mare|Golfo":1.8,"Eco del mare|Mirabello/Spezia":4.3,"Eco del mare|Rosse":5.3,"Eco del mare|Tino":3.8,"Fiascherino|Byron":4.2,"Fiascherino|Caletta":0.7,"Fiascherino|Castello":1.2,"Fiascherino|Diga":2.4,"Fiascherino|Eco del mare":0.4,"Fiascherino|Golfo":1.7,"Fiascherino|Lido":1.6,"Fiascherino|Mirabello/Spezia":4.5,"Fiascherino|Palmaria":3.3,"Fiascherino|Porto Venere":3.6,"Fiascherino|Pozzale":3.6,"Fiascherino|Rosse":4.9,"Fiascherino|Tellaro":1.1,"Fiascherino|Tino":3.8,"Golfo|Mirabello/Spezia":4.5,"Golfo|Rosse":5.2,"Golfo|Tino":2.4,"Lerici|Byron":3.9,"Lerici|Caletta":1.3,"Lerici|Castello":0.7,"Lerici|Diga":1.4,"Lerici|Eco del mare":1.5,"Lerici|Fiascherino":1.6,"Lerici|Golfo":1.9,"Lerici|Lido":0.2,"Lerici|Mirabello/Spezia":3.3,"Lerici|Palmaria":3.5,"Lerici|Porto Lotti":2.7,"Lerici|Porto Venere":3.6,"Lerici|Pozzale":4,"Lerici|Rosse":4.9,"Lerici|Tellaro":2.1,"Lerici|Tino":4,"Lido|Byron":4.1,"Lido|Castello":0.9,"Lido|Diga":1.4,"Lido|Eco del mare":1.7,"Lido|Golfo":2.1,"Lido|Mirabello/Spezia":3.3,"Lido|Palmaria":3.7,"Lido|Pozzale":4.2,"Lido|Rosse":5.1,"Lido|Tellaro":2.3,"Lido|Tino":4.2,"Palmaria|Byron":1.9,"Palmaria|Castello":2.7,"Palmaria|Diga":2.7,"Palmaria|Eco del mare":3.1,"Palmaria|Golfo":2,"Palmaria|Mirabello/Spezia":3.1,"Palmaria|Pozzale":0.8,"Palmaria|Rosse":3,"Palmaria|Tellaro":3.5,"Palmaria|Tino":1.4,"Porto Lotti|Byron":3.9,"Porto Lotti|Caletta":3.3,"Porto Lotti|Castello":3,"Porto Lotti|Diga":1.4,"Porto Lotti|Eco del mare":3.6,"Porto Lotti|Fiascherino":3.8,"Porto Lotti|Golfo":4.5,"Porto Lotti|Lido":2.7,"Porto Lotti|Mirabello/Spezia":1.1,"Porto Lotti|Palmaria":3.4,"Porto Lotti|Porto Venere":3.6,"Porto Lotti|Pozzale":4,"Porto Lotti|Rosse":4.9,"Porto Lotti|Tellaro":4.1,"Porto Lotti|Tino":4.7,"Porto Venere|Byron":0.6,"Porto Venere|Caletta":3.6,"Porto Venere|Castello":3.3,"Porto Venere|Diga":2.9,"Porto Venere|Eco del mare":3.7,"Porto Venere|Golfo":2.9,"Porto Venere|Lido":3.4,"Porto Venere|Mirabello/Spezia":3.6,"Porto Venere|Palmaria":1.3,"Porto Venere|Pozzale":2,"Porto Venere|Rosse":1.6,"Porto Venere|Tellaro":4.4,"Porto Venere|Tino":2.5,"Pozzale|Byron":1.9,"Pozzale|Eco del mare":3.4,"Pozzale|Golfo":2.4,"Pozzale|Mirabello/Spezia":3.9,"Pozzale|Rosse":2.9,"Pozzale|Tino":0.9,"Rosse|Mirabello/Spezia":5,"Tellaro|Byron":3.7,"Tellaro|Eco del mare":1.1,"Tellaro|Golfo":1.5,"Tellaro|Mirabello/Spezia":4.9,"Tellaro|Pozzale":3.8,"Tellaro|Rosse":4.7,"Tellaro|Tino":4,"Tino|Mirabello/Spezia":4.5,"Tino|Rosse":3.4};
+
+const CURVE=[[5,15],[10,30],[20,45],[30,55],[40,60]];
+const BASE_LOCS=['Lerici','Porto Lotti','Porto Venere','Palmaria','Castello','Caletta','Fiascherino','Byron','Tino','Pozzale','Eco del mare','Diga','Tellaro','Golfo','Lido','Rosse','Mirabello/Spezia'];
+const DEF_S={tankCapacity:350,currentFuel:137.2,defaultSpeed:25,timeCoeff:1.0,consConst:1.0,customRoutes:[]};
+
+let S={...DEF_S},T=[],FR=[],COSTS=[],legs=[{from:'',to:'',distance:0,mode:'med'}];
+
+function getDist(f,t){
+  if(!f||!t)return null;
+  let cr=(S.customRoutes||[]).find(x=>(x.from===f&&x.to===t)||(x.from===t&&x.to===f));
+  if(cr)return cr.distance;
+  let d=DM[f+'|'+t]||DM[t+'|'+f];
+  console.log(`getDist('${f}','${t}') = ${d}`);  // DEBUG
+  return d||null;
+}
+
+function locs(){let l=[...BASE_LOCS];(S.customRoutes||[]).forEach(cr=>{if(!l.includes(cr.from))l.push(cr.from);if(!l.includes(cr.to))l.push(cr.to)});return l}
+
+function lo(s){return '<option value="">Select</option>'+locs().map(l=>'<option value="'+l+'"'+(s===l?' selected':'')+'>'+l+'</option>').join('')}
+
+onSnapshot(doc(db,'settings','main'),s=>{if(s.exists())S={...DEF_S,...s.data()};render()},{});
+onSnapshot(collection(db,'trips'),s=>{T=s.docs.map(d=>({_id:d.id,...d.data()}));T.sort((a,b)=>(b.date||'').localeCompare(a.date||''));render()},{});
+onSnapshot(collection(db,'fuelRefuels'),s=>{FR=s.docs.map(d=>({_id:d.id,...d.data()}));FR.sort((a,b)=>(b.date||'').localeCompare(a.date||''));},{});
+onSnapshot(collection(db,'costs'),s=>{COSTS=s.docs.map(d=>({_id:d.id,...d.data()}));COSTS.sort((a,b)=>(b.date||'').localeCompare(a.date||''));},{});
+
+function td(){return new Date().toISOString().split('T')[0]}
+function r(n,d){return Math.round(n*Math.pow(10,d||1))/Math.pow(10,d||1)}
+
+function cRate(kn){
+  if(kn<=CURVE[0][0])return CURVE[0][1];
+  if(kn>=CURVE[CURVE.length-1][0])return CURVE[CURVE.length-1][1];
+  for(let i=0;i<CURVE.length-1;i++){
+    if(kn>=CURVE[i][0]&&kn<=CURVE[i+1][0]){
+      let t=(kn-CURVE[i][0])/(CURVE[i+1][0]-CURVE[i][0]);
+      return CURVE[i][1]+t*(CURVE[i+1][1]-CURVE[i][1]);
+    }
+  }
+  return 60;
+}
+
+function calcLeg(d,s,m){
+  let h=(s>0?(d/s)*(S.timeCoeff||1):0);
+  let c=h*cRate(s)*(m==='low'?0.8:m==='high'?1.2:1.0)*(S.consConst||1);
+  return{hours:r(h,3),consumption:r(c,2)};
+}
+
+window.go=(id,btn)=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('t-'+id).classList.add('on');
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelector('.cnt').scrollTop=0;
+};
+
+function render(){
+  // DASH
+  let h='<div class="sh">Dashboard ('+T.length+' trips)</div>';
+  h+='<p style="font-size:13px;color:var(--mt);line-height:1.5">Fuel: '+Math.round(S.currentFuel)+'L / '+S.tankCapacity+'L<br>Consumed: '+r(T.reduce((s,t)=>s+(t.consumption||0),0))+'L</p>';
+  document.getElementById('t-dash').innerHTML=h;
+
+  // REG (TRIP FORM) - FIX GOES HERE
+  let totalDist=r(legs.reduce((s,l)=>s+(l.distance||0),0));
+  let chain=legs.filter(l=>l.from).map(l=>l.from);if(legs.length&&legs[legs.length-1].to)chain.push(legs[legs.length-1].to);
+  
+  h='<div class="sh">Log Trip</div><div class="fg"><label>Date</label><input type="date" id="trD" value="'+td()+'"></div><label style="display:block;font-size:12px;font-weight:500;margin:12px 0 6px">Route legs</label>';
+  
+  legs.forEach((leg,i)=>{
+    // CRITICAL: Get distance now for display
+    let d=getDist(leg.from,leg.to);
+    h+='<div class="lc"><div class="lh"><span class="ln">Leg '+(i+1)+'</span>'+(legs.length>1?'<button class="del" onclick="rmLeg('+i+')">✕</button>':'')+'</div>';
+    h+='<div class="lr"><select class="ls" onchange="uLeg('+i+',\'from\',this.value)">'+lo(leg.from)+'</select><span class="la">→</span><select class="ls" onchange="uLeg('+i+',\'to\',this.value)">'+lo(leg.to)+'</select></div>';
+    h+='<div class="ld"><input type="number" class="ldi" value="'+(d!==null?d:'')+'" disabled placeholder="Auto"><span class="lm">mi</span></div>';
+    h+='<div class="mr"><button class="mb'+(leg.mode==='low'?' on':'')+'" onclick="uLeg('+i+',\'mode\',\'low\')">Low</button><button class="mb'+(leg.mode==='med'?' on':'')+'" onclick="uLeg('+i+',\'mode\',\'med\')">Med</button><button class="mb'+(leg.mode==='high'?' on':'')+'" onclick="uLeg('+i+',\'mode\',\'high\')">High</button></div>';
+    h+='</div>';
+  });
+  
+  h+='<button class="bal" onclick="addLeg()">+ Add destination</button>';
+  if(chain.length>1)h+='<div class="ts2"><div class="r">'+chain.join(' → ')+'</div><div class="d">Total: '+totalDist+' mi</div></div>';
+  h+='<div class="fg"><label>Speed (kn)</label><input type="number" id="trS" value="'+(S.defaultSpeed||25)+'" oninput="calcPreview()"></div><div id="calc"></div><button class="btn bb" onclick="doTrip()">Log trip</button>';
+  document.getElementById('t-reg').innerHTML=h;
+}
+
+window.uLeg=(i,f,v)=>{
+  legs[i][f]=v;
+  console.log(`uLeg(${i},'${f}','${v}') - before: from='${legs[i].from}' to='${legs[i].to}' distance='${legs[i].distance}'`);
+  
+  // When From or To changes, ALWAYS lookup distance
+  if(f==='from'||f==='to'){
+    let d=getDist(legs[i].from,legs[i].to);
+    console.log(`  After lookup: distance = ${d}`);
+    legs[i].distance=d||0;
+  }
+  
+  render();
+  calcPreview();
+};
+
+window.addLeg=()=>{
+  let lastLeg=legs[legs.length-1];
+  let newLeg={from:lastLeg.to||'',to:'',distance:0,mode:'med'};
+  legs.push(newLeg);
+  console.log('Added leg, total legs now:',legs.length);
+  render();
+};
+
+window.rmLeg=i=>{
+  if(legs.length<=1)return;
+  legs.splice(i,1);
+  render();
+};
+
+window.calcPreview=()=>{
+  let spd=parseFloat(document.getElementById('trS').value)||0;
+  let html='';
+  legs.forEach((l,i)=>{
+    if(!l.from||!l.to||l.distance===0||l.distance===null)return;
+    let c=calcLeg(l.distance,spd,l.mode);
+    html+='<b>Leg '+(i+1)+':</b> '+l.from+'→'+l.to+' = '+c.consumption+'L<br>';
+  });
+  let el=document.getElementById('calc');
+  if(el)el.innerHTML=html?'<div class="calc">'+html+'</div>':'';
+};
+
+window.doTrip=async()=>{
+  let vl=legs.filter(l=>l.from&&l.to&&l.distance>0);
+  let spd=parseFloat(document.getElementById('trS').value);
+  if(!vl.length||!spd){alert('Complete all fields'); return;}
+  
+  let totalC=0;
+  let sl=vl.map(l=>{
+    let c=calcLeg(l.distance,spd,l.mode);
+    totalC+=c.consumption;
+    return{from:l.from,to:l.to,distance:l.distance,mode:l.mode,consumption:c.consumption};
+  });
+  
+  await addDoc(collection(db,'trips'),{
+    date:document.getElementById('trD').value,
+    legs:sl,
+    distance:r(vl.reduce((s,l)=>s+l.distance,0)),
+    speed:spd,
+    consumption:r(totalC)
+  });
+  S.currentFuel=Math.max(0,S.currentFuel-r(totalC));
+  await setDoc(doc(db,'settings','main'),S);
+  legs=[{from:'',to:'',distance:0,mode:'med'}];
+  alert('Trip logged!');
+  render();
+};
+
+window.doFuel=async()=>{
+  let fl=parseFloat(document.getElementById('fLit').value),fp=parseFloat(document.getElementById('fPr').value);
+  if(!fl||!fp){alert('Fill fields'); return;}
+  await addDoc(collection(db,'fuelRefuels'),{date:document.getElementById('fD').value,fuelLiters:fl,fuelPrice:fp,fuelCost:r(fl*fp,2)});
+  S.currentFuel=Math.min(S.tankCapacity,S.currentFuel+fl);
+  await setDoc(doc(db,'settings','main'),S);
+};
+
+window.doSave=async()=>{
+  S.tankCapacity=parseFloat(document.getElementById('sCap').value);
+  S.currentFuel=parseFloat(document.getElementById('sFuel').value);
+  S.defaultSpeed=parseFloat(document.getElementById('sSpd').value);
+  await setDoc(doc(db,'settings','main'),S);
+  alert('Saved!');
+};
+
+document.getElementById('t-fuel').innerHTML='<div class="sh">Add Fuel</div><div class="fg"><label>Date</label><input type="date" id="fD" value="'+td()+'"></div><div class="fg"><label>Liters</label><input type="number" step="0.1" id="fLit"></div><div class="fg"><label>€/L</label><input type="number" step="0.01" id="fPr"></div><button class="btn bg2" onclick="doFuel()">Add</button>';
+
+document.getElementById('t-hist').innerHTML='<div class="sh">History</div>';
+document.getElementById('t-costs').innerHTML='<div class="sh">Costs</div>';
+document.getElementById('t-set').innerHTML='<div class="sh">Settings</div><div class="fg"><label>Tank</label><input type="number" id="sCap" value="'+S.tankCapacity+'"></div><div class="fg"><label>Speed</label><input type="number" id="sSpd" value="'+(S.defaultSpeed||25)+'"></div><button class="btn bb" onclick="doSave()">Save</button>';
+
+getDoc(doc(db,'settings','main')).then(s=>{if(!s.exists())setDoc(doc(db,'settings','main'),DEF_S)});
+render();
+</script>
+</body>
+</html>

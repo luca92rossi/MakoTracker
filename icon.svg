@@ -1,0 +1,26 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#378ADD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0C447C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="200" height="200" fill="url(#bgGrad)"/>
+  <!-- Water waves -->
+  <path d="M 0 150 Q 25 140, 50 150 T 100 150 T 150 150 T 200 150 L 200 200 L 0 200 Z" fill="#0099CC" opacity="0.3"/>
+  <path d="M 0 170 Q 25 160, 50 170 T 100 170 T 150 170 T 200 170 L 200 200 L 0 200 Z" fill="#0099CC" opacity="0.5"/>
+  <!-- Boat hull -->
+  <path d="M 60 110 L 100 140 L 140 110 Z" fill="#E8E8E8" stroke="#333" stroke-width="2"/>
+  <!-- Boat cabin -->
+  <rect x="85" y="90" width="30" height="25" fill="#E8E8E8" stroke="#333" stroke-width="2" rx="2"/>
+  <!-- Mast -->
+  <line x1="100" y1="85" x2="100" y2="30" stroke="#333" stroke-width="2"/>
+  <!-- Sail -->
+  <path d="M 100 40 L 140 80 L 100 75 Z" fill="#E8E8E8" stroke="#333" stroke-width="1.5" opacity="0.8"/>
+  <!-- Flag (red) -->
+  <rect x="98" y="25" width="20" height="12" fill="#E24B4A"/>
+  <!-- Fuel gauge ring (top-right) -->
+  <circle cx="160" cy="40" r="20" fill="none" stroke="#FFC107" stroke-width="3" opacity="0.7"/>
+  <text x="160" y="48" text-anchor="middle" font-size="18" font-weight="bold" fill="#FFC107">⛽</text>
+</svg>
